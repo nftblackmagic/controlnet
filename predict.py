@@ -37,10 +37,8 @@ class Predictor(BasePredictor):
         """Load the model into memory to make running multiple predictions efficient"""
         self.model = create_model(f'./models/{model_name}.yaml').cpu()
         self.model.load_state_dict(load_state_dict('./models/v1-5-pruned.ckpt', location='cuda'), strict=False)
-        model.load_state_dict(load_state_dict(f'./models/{model_name}.pth', location='cuda'), strict=False)
-        model = model.cuda()
-        self.model = create_model('./models/cldm_v15.yaml').cuda()
-        self.model.load_state_dict(load_state_dict(get_state_dict_path(MODEL_TYPE), location='cuda'))
+        self.model.load_state_dict(load_state_dict(f'./models/{model_name}.pth', location='cuda'), strict=False)
+        self.model = self.model.cuda()
         self.ddim_sampler = DDIMSampler(self.model)
 
     def predict(
