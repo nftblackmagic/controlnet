@@ -21,7 +21,8 @@ def download_base():
     Download base model from huggingface with wget and save to models directory
     """
     base_url = "https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned.ckpt"
-    relative_path_to_base = "./models/"
+    relative_path_to_base = base_url.replace("https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/", "./models/")
+
     if not os.path.exists(relative_path_to_base):
         print(f"Downloading base model...")
         call(["wget", "-O", relative_path_to_base, base_url])
