@@ -30,6 +30,9 @@ elif MODEL_TYPE == "seg":
     from gradio_seg2image import process_seg
 elif MODEL_TYPE == "openpose":
     from gradio_pose2image import process_pose
+elif MODEL_TYPE == "tile":
+    from gradio_tile2image import process_tile
+    model_name = "control_v11f1e_sd15_tile"
 
 class Predictor(BasePredictor):
     def setup(self):
@@ -64,6 +67,7 @@ class Predictor(BasePredictor):
         a_prompt: str = Input(description="Additional text to be appended to prompt", default="best quality, extremely detailed"),
         n_prompt: str = Input(description="Negative Prompt", default="longbody, lowres, bad anatomy, bad hands, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality"),
         detect_resolution: int = Input(description="Resolution at which detection method will be applied)", default=512, ge=128, le=1024), # only applicable when model type is 'HED', 'seg', or 'MLSD'
+        denoise_strength: float = Input(description="Denoise Strength (only applicable when model type is 'tile')", default=1.0, ge=0.1, le=1.0), # only applicable when model type is 'normal'
         # bg_threshold: float = Input(description="Background Threshold (only applicable when model type is 'normal')", default=0.0, ge=0.0, le=1.0), # only applicable when model type is 'normal'
         # value_threshold: float = Input(description="Value Threshold (only applicable when model type is 'MLSD')", default=0.1, ge=0.01, le=2.0), # only applicable when model type is 'MLSD'
         # distance_threshold: float = Input(description="Distance Threshold (only applicable when model type is 'MLSD')", default=0.1, ge=0.01, le=20.0), # only applicable when model type is 'MLSD'
@@ -208,6 +212,23 @@ class Predictor(BasePredictor):
                 scale,
                 seed,
                 eta,
+                self.model,
+                self.ddim_sampler,
+            )
+        elif MODEL_TYPE == "tile":
+            outputs = process_tile(
+                input_image,
+                prompt,
+                a_prompt,
+                n_prompt,
+                num_samples,
+                image_resolution,
+                detect_resolution,
+                ddim_steps,
+                scale,
+                seed,
+                eta,
+                denoise_strength,
                 self.model,
                 self.ddim_sampler,
             )
