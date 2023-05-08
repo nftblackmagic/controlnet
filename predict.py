@@ -11,10 +11,11 @@ import numpy as np
 from typing import List
 from utils import get_state_dict_path, download_model, model_dl_urls, annotator_dl_urls
 
-MODEL_TYPE = "openpose"
+MODEL_TYPE = "canny"
 
 if MODEL_TYPE == "canny":
     from gradio_canny2image import process_canny
+    model_name = "control_v11p_sd15_canny"
 elif MODEL_TYPE == "depth":
     from gradio_depth2image import process_depth
 elif MODEL_TYPE == "hed":
@@ -32,7 +33,12 @@ elif MODEL_TYPE == "openpose":
 
 class Predictor(BasePredictor):
     def setup(self):
+        
         """Load the model into memory to make running multiple predictions efficient"""
+        self.model = create_model(f'./models/{model_name}.yaml').cpu()
+        self.model.load_state_dict(load_state_dict('./models/v1-5-pruned.ckpt', location='cuda'), strict=False)
+        model.load_state_dict(load_state_dict(f'./models/{model_name}.pth', location='cuda'), strict=False)
+        model = model.cuda()
         self.model = create_model('./models/cldm_v15.yaml').cuda()
         self.model.load_state_dict(load_state_dict(get_state_dict_path(MODEL_TYPE), location='cuda'))
         self.ddim_sampler = DDIMSampler(self.model)

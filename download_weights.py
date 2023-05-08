@@ -9,9 +9,11 @@ args = parser.parse_args()
 
 MODEL_TYPE = args.model_type
 
-from utils import model_dl_urls, annotator_dl_urls, download_model
+from utils import model_dl_urls, annotator_dl_urls, download_model, download_base
 
 # for model_name in annotator_dl_urls.keys():
 #     download_model(model_name, annotator_dl_urls)
+
+download_base()
 
 download_model(MODEL_TYPE, model_dl_urls)
